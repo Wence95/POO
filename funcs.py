@@ -4,3 +4,10 @@ def checkUserPass(usuario, password, listado):
             if password == user.password:
                 return True
     return False
+
+
+def getProfile(usuario, listado):
+    for user in listado:
+        if usuario == user.username:
+            return user.perfil
+
