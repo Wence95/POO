@@ -11,3 +11,13 @@ def getProfile(usuario, listado):
         if usuario == user.username:
             return user.perfil
 
+
+def callback(i):
+    if i.isdigit():
+        return True
+
+    elif i == "":
+        return True
+
+    else:
+        return False

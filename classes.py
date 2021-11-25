@@ -16,19 +16,30 @@ class Usuario:
         self.password = password
         self.perfil = perfil
 
+    def __repr__(self):
+        return self.username, self.nombre, self.perfil
+
 
 class Evento:
-    def __init__(self, nombre, asistencia, fecha, hora):
+    def __init__(self, nombre, asistencia, fecha, hora, rut):
         self.nombre = nombre
         self.asistencia = asistencia
         self.fecha = fecha
         self.hora = hora
+        self.rut = rut
+
+    def __repr__(self):
+        return self.nombre, self.asistencia, self.fecha, self.hora
 
 
 class Producto:
-    def __init__(self, tipo, valor):
+    def __init__(self, tipo, valor, stock=9999):
         self.tipo = tipo
         self.valor = valor
+        self.stock = stock
+
+    def __repr__(self):
+        return self.tipo, self.valor, self.stock
 
 
 class State:
