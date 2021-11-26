@@ -47,6 +47,38 @@ def main():
             etiqueta.pack()
             etiqueta["text"] = "Usuario o contraseña inválidos"
 
+    def eliminarElemento(elemento, lista):
+        for e in lista:
+            for word in e.__repr__():
+                print(word)
+        lista.remove(elemento)
+        mostrarLista(lista)
+
+    def editarElemento(elemento, lista):
+        lista.remove(elemento)
+        if type(elemento) is Producto:
+            agregarProductoWindow(elemento.tipo, elemento.valor, elemento.stock)
+        if type(elemento) is Cliente:
+            if elemento.metodo == "Tarjeta":
+                modo = 1
+            elif elemento.metodo == "Efectivo":
+                modo = 2
+            elif elemento.metodo == "Cheque":
+                modo = 3
+            else:
+                modo = 4
+            registerClientWindow(elemento.nombre, elemento.rut, elemento.empresa,
+                                 elemento.comuna, elemento.numero, elemento.email, modo)
+        if type(elemento) is Evento:
+            registrarEventoWindow(elemento.rut, elemento.nombre, str(elemento.asistencia),
+                                  elemento.fecha, elemento.hora)
+        if type(elemento) is Usuario:
+            if elemento.perfil == "Funcionaro":
+                p = 1
+            else:
+                p = 2
+            signUpWindow(p, elemento.username, elemento.nombre)
+
     def signUp(nombre, username, password, option):
         if option.get() == 1:
             perfil = "Funcionario"
@@ -56,24 +88,29 @@ def main():
         listadoUsers.append(newUser)
         loggedInWindow()
 
-    def signUpWindow():
+    def signUpWindow(o=1, user="", name=""):
         clearWindow()
         option = tk.IntVar()
+        option.set(o)
         upperFrame = tk.Frame(frame)
+
         upperFrame.pack(side=tk.TOP)
         tk.Radiobutton(upperFrame, text="Funcionario", variable=option, value=1).pack(side=tk.LEFT)
         tk.Radiobutton(upperFrame, text="Gestor de informes", variable=option, value=2).pack(side=tk.LEFT)
 
         tk.Label(frame, text="Ingrese nuevo nombre de usuario").pack()
         caja_user = tk.Entry(frame)
+        caja_user.insert(tk.END, user)
         caja_user.pack()
 
         tk.Label(frame, text="Ingrese contraseña").pack()
         caja_pass = tk.Entry(frame, show="*")
+
         caja_pass.pack()
 
         tk.Label(frame, text="Ingrese nombre completo").pack()
         caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, name)
         caja_name.pack()
 
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: signUp(caja_name.get(),
@@ -83,36 +120,125 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
+    def detalleEvento(evento):
+        clearWindow()
+        tk.Label(frame, text="Precio unitario").grid(row=0, column=0)
+        tk.Label(frame, text="Producto").grid(row=0, column=1)
+        tk.Label(frame, text="Cantidad").grid(row=0, column=2)
+        tk.Label(frame, text="Total por producto").grid(row=0, column=3)
+        suma = 0
+        j = 0
+        precio = 0
+        nombre = ""
+        subtotal = 0
+        for producto in evento.productos:
+            j += 1
+            for p in itemList:
+                if producto["producto"] == p.tipo:
+                    precio = p.valor
+                    nombre = p.tipo
+                    subtotal = precio * producto["cantidad"]
+                    break
+                else:
+                    precio = 0
+                    nombre = 0
+            tk.Label(frame, text=str(precio)).grid(row=j, column=0)
+            tk.Label(frame, text=nombre).grid(row=j, column=1)
+            tk.Label(frame, text=str(producto["cantidad"])).grid(row=j, column=2)
+            tk.Label(frame, text=str(subtotal)).grid(row=j, column=3)
+            suma += subtotal
+        tk.Label(frame, text="Total").grid(row=j+1, column=0)
+        tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
+
+    def pefunction(q, p, evento, lista):
+        lista.remove(evento)
+        dicc = {"cantidad": int(q),
+                "producto": p}
+        evento.productos.append(dicc)
+        lista.append(evento)
+        loggedInWindow()
+
+    def producto_evento(evento, lista):
+        clearWindow()
+        tk.Label(frame, text="Agruegue un producto y su cantidad").pack()
+        plist = []
+        nlist = []
+        minimo = evento.asistencia * 3
+        product = tk.StringVar()
+        cant = tk.StringVar()
+        for producto in itemList:
+            plist.append(producto.tipo)
+        tk.OptionMenu(frame, product, *plist).pack()
+        for i in range(minimo-1, 3500):
+            nlist.append(str(i+1))
+        tk.OptionMenu(frame, cant, *nlist).pack()
+
+        boton1 = tk.Button(frame, text="Aceptar", command=lambda: pefunction(cant.get(),
+                                                                             product.get(), evento, lista))
+        boton1.pack()
+
     def mostrarLista(lista):
         clearWindow()
         i = 0
-        if type(lista[0]) is Usuario:
-            tk.Label(frame, text="Usuario").grid(row=0, column=0)
-            tk.Label(frame, text="Nombre").grid(row=0, column=1)
-            tk.Label(frame, text="Perfil").grid(row=0, column=2)
-        elif type(lista[0]) is Evento:
-            tk.Label(frame, text="Evento").grid(row=0, column=0)
-            tk.Label(frame, text="Asistencia").grid(row=0, column=1)
-            tk.Label(frame, text="Fecha").grid(row=0, column=2)
-            tk.Label(frame, text="Hora").grid(row=0, column=3)
-        elif type(lista[0]) is Producto:
-            tk.Label(frame, text="Tipo").grid(row=0, column=0)
-            tk.Label(frame, text="Valor").grid(row=0, column=1)
-            tk.Label(frame, text="Stock").grid(row=0, column=2)
-        elif type(lista[0]) is Cliente:
-            tk.Label(frame, text="Nombre").grid(row=0, column=0)
-            tk.Label(frame, text="RUT").grid(row=0, column=1)
-            tk.Label(frame, text="Empresa").grid(row=0, column=2)
-            tk.Label(frame, text="Teléfono").grid(row=0, column=3)
-            tk.Label(frame, text="E-Mail").grid(row=0, column=4)
-            tk.Label(frame, text="Método de pago").grid(row=0, column=5)
+        if len(lista) > 0:
+            if type(lista[0]) is Usuario:
+                tk.Label(frame, text="Usuario").grid(row=0, column=0)
+                tk.Label(frame, text="Nombre").grid(row=0, column=1)
+                tk.Label(frame, text="Perfil").grid(row=0, column=2)
+            elif type(lista[0]) is Evento:
+                tk.Label(frame, text="Evento").grid(row=0, column=0)
+                tk.Label(frame, text="Asistencia").grid(row=0, column=1)
+                tk.Label(frame, text="Fecha").grid(row=0, column=2)
+                tk.Label(frame, text="Hora").grid(row=0, column=3)
+            elif type(lista[0]) is Producto:
+                tk.Label(frame, text="Tipo").grid(row=0, column=0)
+                tk.Label(frame, text="Valor").grid(row=0, column=1)
+                tk.Label(frame, text="Stock").grid(row=0, column=2)
+            elif type(lista[0]) is Cliente:
+                tk.Label(frame, text="Nombre").grid(row=0, column=0)
+                tk.Label(frame, text="RUT").grid(row=0, column=1)
+                tk.Label(frame, text="Empresa").grid(row=0, column=2)
+                tk.Label(frame, text="Comuna").grid(row=0, column=3)
+                tk.Label(frame, text="Numero").grid(row=0, column=4)
+                tk.Label(frame, text="email").grid(row=0, column=5)
+                tk.Label(frame, text="Método de pago").grid(row=0, column=6)
 
-        for elemento in lista:
-            i += 1
-            j = -1
-            for word in elemento.__repr__():
-                j += 1
-                tk.Label(frame, text=word).grid(row=i, column=j, padx=10, sticky=tk.W)
+            for elemento in lista:
+                i += 1
+                j = -1
+                for word in elemento.__repr__():
+                    j += 1
+                    tk.Label(frame, text=word).grid(row=i, column=j, padx=10, sticky=tk.W)
+                if getProfile(state.username, listadoUsers) == 'Administrador':
+                    if type(elemento) is Usuario:
+                        if elemento.perfil != "Administrador":
+                            # noinspection PyShadowingNames
+                            tk.Button(frame, text="Eliminar",
+                                      command=lambda elemento=elemento:
+                                      eliminarElemento(elemento, lista)).grid(row=i, column=j+1)
+                            # noinspection PyShadowingNames
+                            tk.Button(frame, text="Editar",
+                                      command=lambda elemento=elemento:
+                                      editarElemento(elemento, lista)).grid(row=i, column=j+2)
+                    else:
+                        # noinspection PyShadowingNames
+                        tk.Button(frame, text="Eliminar",
+                                  command=lambda elemento=elemento:
+                                  eliminarElemento(elemento, lista)).grid(row=i, column=j + 1)
+                        # noinspection PyShadowingNames
+                        tk.Button(frame, text="Editar",
+                                  command=lambda elemento=elemento: editarElemento(elemento, lista)).grid(row=i,
+                                                                                                          column=j + 2)
+
+                if not (getProfile(state.username, listadoUsers) == "Gestor"):
+                    if type(elemento) is Evento:
+                        # noinspection PyShadowingNames
+                        tk.Button(frame, text="Agregar producto",
+                                  command=lambda elemento=elemento: producto_evento(elemento,
+                                                                                    lista)).grid(row=i, column=j + 3)
+                        # noinspection PyShadowingNames
+                        tk.Button(frame, text="Detalle",
+                                  command=lambda elemento=elemento: detalleEvento(elemento)).grid(row=i, column=j + 4)
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
@@ -130,7 +256,7 @@ def main():
         clientList.append(newClient)
         loggedInWindow()
 
-    def registerClientWindow(rut=""):
+    def registerClientWindow(rut="", name="", empresa="", comuna="", numero="", mail="", modo=1):
         clearWindow()
 
         tk.Label(frame, text="Ingrese rut del cliente").pack()
@@ -140,22 +266,27 @@ def main():
 
         tk.Label(frame, text="Ingrese nombre del cliente").pack()
         caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, name)
         caja_name.pack()
 
         tk.Label(frame, text="Ingrese empresa").pack()
         caja_empresa = tk.Entry(frame)
+        caja_empresa.insert(tk.END, empresa)
         caja_empresa.pack()
 
         tk.Label(frame, text="Ingrese comuna").pack()
         caja_city = tk.Entry(frame)
+        caja_city.insert(tk.END, comuna)
         caja_city.pack()
 
         tk.Label(frame, text="Ingrese número de teléfono").pack()
         caja_phone = tk.Entry(frame)
+        caja_phone.insert(tk.END, numero)
         caja_phone.pack()
 
-        tk.Label(frame, text="Ingrese comuna").pack()
+        tk.Label(frame, text="Ingrese mail").pack()
         caja_mail = tk.Entry(frame)
+        caja_mail.insert(tk.END, mail)
         caja_mail.pack()
 
         option = tk.IntVar()
@@ -165,18 +296,19 @@ def main():
         tk.Radiobutton(paymentFrame, text="Efectivo", variable=option, value=2).pack(side=tk.LEFT)
         tk.Radiobutton(paymentFrame, text="Cheque", variable=option, value=3).pack(side=tk.LEFT)
         tk.Radiobutton(paymentFrame, text="Transferencia", variable=option, value=4).pack(side=tk.LEFT)
+        option.set(modo)
 
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: registerClient(caja_name.get(),
                                                                                  caja_rut.get(), caja_empresa.get(),
                                                                                  caja_mail.get(), caja_city.get(),
-                                                                                 caja_phone.get(), option))
+                                                                                 caja_phone.get(), option.get()))
         boton1.pack()
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
     def registrarEvento(nombre, asistencia, fecha, hora, _rut):
-        newEvent = Evento(nombre, asistencia, fecha, hora, _rut)
+        newEvent = Evento(nombre, asistencia, fecha, hora, _rut, [])
         bul = False
         for cliente in clientList:
             if cliente.rut == _rut:
@@ -187,7 +319,7 @@ def main():
         else:
             registerClientWindow(_rut)
 
-    def registrarEventoWindow():
+    def registrarEventoWindow(rut="", event="", asis="", mes="Enero", dia="1", hora="10:00"):
         # _day = "0"
         #
         # def setDay(dia):
@@ -219,14 +351,17 @@ def main():
 
         tk.Label(frame, text="Ingrese rut del cliente que hace la reserva, sin puntos y con guion").pack()
         caja_rut = tk.Entry(frame)
+        caja_rut.insert(tk.END, rut)
         caja_rut.pack()
 
         tk.Label(frame, text="Ingrese nombre del nuevo evento").pack()
         caja_event = tk.Entry(frame)
+        caja_event.insert(tk.END, event)
         caja_event.pack()
 
         tk.Label(frame, text="Ingrese cantidad de asistentes").pack()
         caja_asis = tk.Entry(frame)
+        caja_asis.insert(tk.END, asis)
         caja_asis.pack()
         reg = ventana.register(callback)
         caja_asis.config(validate="key", validatecommand=(reg, '%P'))
@@ -236,13 +371,13 @@ def main():
         monthChoices = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
                         "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
         month = tk.StringVar()
-        month.set(monthChoices[0])
+        month.set(mes)
         m = tk.OptionMenu(timeFrame, month, *monthChoices)
         dayChoices = []
         for i in range(31):
             dayChoices.append(str(i + 1))
         day = tk.StringVar()
-        day.set(dayChoices[0])
+        day.set(dia)
         d = tk.OptionMenu(timeFrame, day, *dayChoices)
         d.pack(side=tk.LEFT)
         m.pack(side=tk.LEFT)
@@ -251,7 +386,7 @@ def main():
                        "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
                        "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
         hour = tk.StringVar()
-        hour.set(hourChoices[0])
+        hour.set(hora)
         h = tk.OptionMenu(timeFrame, hour, *hourChoices)
         h.pack(side=tk.RIGHT, padx=10)
 
@@ -267,27 +402,37 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
-    def agregarProducto(tipo, valor):
-        newProduct = Producto(tipo, valor)
+    def agregarProducto(tipo, valor, stock=9999):
+        newProduct = Producto(tipo, valor, stock)
         itemList.append(newProduct)
         loggedInWindow()
 
-    def agregarProductoWindow():
+    def agregarProductoWindow(nombre="", precio="", stock=""):
         clearWindow()
 
         tk.Label(frame, text="Ingrese nombre del producto").pack()
         caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, nombre)
         caja_name.pack()
 
         tk.Label(frame, text="Ingrese su precio por unidad").pack()
         caja_precio = tk.Entry(frame)
+        caja_precio.insert(tk.END, precio)
         caja_precio.pack()
 
         reg = ventana.register(callback)
         caja_precio.config(validate="key", validatecommand=(reg, '%P'))
 
+        tk.Label(frame, text="Ingrese el stock del producto").pack()
+        caja_stock = tk.Entry(frame)
+        caja_stock.insert(tk.END, stock)
+        caja_stock.pack()
+
+        caja_stock.config(validate="key", validatecommand=(reg, '%P'))
+
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: agregarProducto(caja_name.get(),
-                                                                                  int(caja_precio.get())))
+                                                                                  int(caja_precio.get()),
+                                                                                  int(caja_stock.get())))
         boton1.pack()
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
@@ -361,7 +506,7 @@ def main():
 
     ventana = tk.Tk()
     auxFrame = tk.Frame(ventana)
-    ventana.geometry("600x450")
+    ventana.geometry("800x450")
     frame = tk.Frame(ventana)
     msg = tk.Frame(ventana)
 

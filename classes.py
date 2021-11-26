@@ -8,6 +8,9 @@ class Cliente:
         self.email = email
         self.metodoPago = metodo_pago
 
+    def __repr__(self):
+        return self.nombre, self.rut, self.empresa, self.comuna, self.numero, self.email, self.metodoPago
+
 
 class Usuario:
     def __init__(self, username, nombre, password, perfil):
@@ -21,12 +24,13 @@ class Usuario:
 
 
 class Evento:
-    def __init__(self, nombre, asistencia, fecha, hora, rut):
+    def __init__(self, nombre, asistencia, fecha, hora, rut, productos):
         self.nombre = nombre
         self.asistencia = asistencia
         self.fecha = fecha
         self.hora = hora
         self.rut = rut
+        self.productos = productos
 
     def __repr__(self):
         return self.nombre, self.asistencia, self.fecha, self.hora
