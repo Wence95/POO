@@ -53,7 +53,10 @@ class BaseDatos:
         for val in values:
             if i >= 1:
                 valueString += ','
-            valueString = valueString + "'" + val + "'"
+            if type(val) is str:
+                valueString = valueString + "'" + val + "'"
+            else:
+                valueString = valueString + str(val)
             i += 1
         j = 0
         for col in columns:
