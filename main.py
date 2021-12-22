@@ -503,10 +503,6 @@ def main():
         boton = tk.Button(auxFrame, text="Cerrar sesión", command=logOut)
         boton.pack()
 
-    admin = Usuario('admin', 'admin', '0000', 'Administrador')
-    db.ingresar('usuario', ('username', 'nombre','contraseña', 'perfil'), admin.__repr__())
-    listadoUsers.append(admin)
-
     ventana = tk.Tk()
     auxFrame = tk.Frame(ventana)
     ventana.geometry("800x450")

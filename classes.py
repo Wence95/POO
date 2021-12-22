@@ -20,7 +20,7 @@ class Usuario:
         self.perfil = perfil
 
     def __repr__(self):
-        return self.username, self.nombre, self.perfil
+        return self.username, self.nombre, self.password, self.perfil
 
 
 class Evento:
