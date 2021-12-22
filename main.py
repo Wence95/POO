@@ -1,4 +1,5 @@
 import tkinter as tk
+import pymysql
 
 from classes import *
 from funcs import *
