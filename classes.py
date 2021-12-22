@@ -24,16 +24,15 @@ class Usuario:
 
 
 class Evento:
-    def __init__(self, nombre, asistencia, fecha, hora, rut, productos):
+    def __init__(self, nombre, asistencia, fecha, rut, productos):
         self.nombre = nombre
         self.asistencia = asistencia
         self.fecha = fecha
-        self.hora = hora
         self.rut = rut
         self.productos = productos
 
     def __repr__(self):
-        return self.nombre, self.asistencia, self.fecha, self.hora
+        return self.nombre, self.asistencia, self.fecha
 
 
 class Producto:

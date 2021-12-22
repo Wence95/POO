@@ -322,17 +322,12 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
-    def registrarEvento(nombre, asistencia, fecha, hora, _rut):
-        newEvent = Evento(nombre, asistencia, fecha, hora, _rut, [])
-        bul = False
-        for cliente in clientList:
-            if cliente.rut == _rut:
-                bul = True
-        eventList.append(newEvent)
-        if bul:
-            loggedInWindow()
-        else:
-            registerClientWindow(_rut)
+    def registrarEvento(nombre, asistencia, fecha_hora, _rut):
+        db.ingresar('evento', ('nombre', 'asistencia', 'fecha', 'rut'),(nombre, asistencia, fecha_hora, _rut))
+        # if bul:
+        #    loggedInWindow()
+        # else:
+        #    registerClientWindow(_rut)
 
     def registrarEventoWindow(rut="", event="", asis="", mes="Enero", dia="1", hora="10:00"):
         # _day = "0"
@@ -381,36 +376,38 @@ def main():
         reg = ventana.register(callback)
         caja_asis.config(validate="key", validatecommand=(reg, '%P'))
 
-        timeFrame = tk.Frame(frame)
-        tk.Label(frame, text="Ingrese cantidad de asistentes").pack()
-        monthChoices = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
-        month = tk.StringVar()
-        month.set(mes)
-        m = tk.OptionMenu(timeFrame, month, *monthChoices)
-        dayChoices = []
-        for i in range(31):
-            dayChoices.append(str(i + 1))
-        day = tk.StringVar()
-        day.set(dia)
-        d = tk.OptionMenu(timeFrame, day, *dayChoices)
-        d.pack(side=tk.LEFT)
-        m.pack(side=tk.LEFT)
-
-        hourChoices = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-                       "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
-                       "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
-        hour = tk.StringVar()
-        hour.set(hora)
-        h = tk.OptionMenu(timeFrame, hour, *hourChoices)
-        h.pack(side=tk.RIGHT, padx=10)
-
-        timeFrame.pack()
+        # timeFrame = tk.Frame(frame)
+        tk.Label(frame, text="Ingrese fecha y hora del evento (YYYY-MM-DD HH:MI:SS").pack()
+        caja_time = tk.Entry(frame)
+        caja_time.insert(tk.END, event)
+        caja_time.pack()
+        # monthChoices = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        #                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+        # month = tk.StringVar()
+        # month.set(mes)
+        # m = tk.OptionMenu(timeFrame, month, *monthChoices)
+        # dayChoices = []
+        # for i in range(31):
+        #     dayChoices.append(str(i + 1))
+        # day = tk.StringVar()
+        # day.set(dia)
+        # d = tk.OptionMenu(timeFrame, day, *dayChoices)
+        # d.pack(side=tk.LEFT)
+        # m.pack(side=tk.LEFT)
+        #
+        # hourChoices = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+        #                "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
+        #                "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
+        # hour = tk.StringVar()
+        # hour.set(hora)
+        # h = tk.OptionMenu(timeFrame, hour, *hourChoices)
+        # h.pack(side=tk.RIGHT, padx=10)
+        #
+        # timeFrame.pack()
 
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: registrarEvento(caja_event.get(),
                                                                                   int(caja_asis.get()),
-                                                                                  month.get() + ', ' + day.get(),
-                                                                                  hour.get(),
+                                                                                  caja_time.get(),
                                                                                   caja_rut.get()))
         boton1.pack()
 
