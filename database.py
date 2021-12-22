@@ -12,15 +12,20 @@ class BaseDatos:
         self.cursor = self.conexion.cursor()
         print("Conexion bd correcta")
 
-    def seleccionarBD(self, id):
-        sql = 'select id, nombre, edad from registro where id={}'.format(id)
+    def seleccionarBD(self, columns, tabla, conditions):
+        i = 0
+        columnString = ''
+        for col in columns:
+            if i >= 1:
+                columnString += ','
+            columnString = columnString + col
+            i += 1
+        sql = 'select {} from {} where {}'.format(columnString, tabla, conditions)
+        print(sql)
         try:
             self.cursor.execute(sql)
             usuario = self.cursor.fetchone()
-
-            print("id: ", usuario[0])
-            print("nombre: ", usuario[1])
-            print("edad: ", usuario[2])
+            print(usuario)
 
         except Exception as e:
             raise

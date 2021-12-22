@@ -41,14 +41,15 @@ def main():
         # Evitar repetición de mensaje "Usuario o contraseña inválidos"
         for widgets in msg.winfo_children():
             widgets.destroy()
-        if checkUserPass(username, password, listadoUsers):
-            state.username = username
-            state.estado = True
-            loggedInWindow()
-        else:
-            etiqueta = tk.Label(msg)
-            etiqueta.pack()
-            etiqueta["text"] = "Usuario o contraseña inválidos"
+        db.seleccionarBD(('username', 'contraseña'), 'usuario', 'username='+username+' AND contraseña='+password)
+        # if checkUserPass(username, password, listadoUsers):
+        #     state.username = username
+        #     state.estado = True
+        #     loggedInWindow()
+        # else:
+        #     etiqueta = tk.Label(msg)
+        #     etiqueta.pack()
+        #     etiqueta["text"] = "Usuario o contraseña inválidos"
 
     def eliminarElemento(elemento, lista):
         for e in lista:
