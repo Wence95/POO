@@ -13,10 +13,13 @@ class BaseDatos:
         print("Conexion bd correcta")
 
     def seleccionarTabla(self, tabla):
-        sql = 'select * from {}'.format(tabla)
+        if tabla != 'usuario':
+            sql = 'select * from {}'.format(tabla)
+        else:
+            sql = 'select id, username, nombre, perfil from usuario'
         try:
-            self.cursos.execute(sql)
-            request = self.cursos.fetchall()
+            self.cursor.execute(sql)
+            request = self.cursor.fetchall()
             return request
 
         except Exception as e:

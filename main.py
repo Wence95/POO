@@ -195,21 +195,24 @@ def main():
         clearWindow()
         i = 0
         if tabla == 'usuario':
-            tk.Label(frame, text="Usuario").grid(row=0, column=0)
-            tk.Label(frame, text="Nombre").grid(row=0, column=1)
-            tk.Label(frame, text="Perfil").grid(row=0, column=2)
+            tk.Label(frame, text = "id").grid(row=0, column=0)
+            tk.Label(frame, text="Usuario").grid(row=0, column=1)
+            tk.Label(frame, text="Nombre").grid(row=0, column=2)
+            tk.Label(frame, text="Perfil").grid(row=0, column=3)
         elif tabla == 'evento':
-            tk.Label(frame, text="Evento").grid(row=0, column=0)
-            tk.Label(frame, text="Asistencia").grid(row=0, column=1)
-            tk.Label(frame, text="Fecha").grid(row=0, column=2)
-            tk.Label(frame, text="Hora").grid(row=0, column=3)
+            tk.Label(frame, text = "id").grid(row=0, column=0)
+            tk.Label(frame, text="Evento").grid(row=0, column=1)
+            tk.Label(frame, text="Asistencia").grid(row=0, column=2)
+            tk.Label(frame, text="Fecha").grid(row=0, column=3)
+            tk.Label(frame, text="Hora").grid(row=0, column=4)
         elif tabla == 'producto':
-            tk.Label(frame, text="Tipo").grid(row=0, column=0)
-            tk.Label(frame, text="Valor").grid(row=0, column=1)
-            tk.Label(frame, text="Stock").grid(row=0, column=2)
+            tk.Label(frame, text = "id").grid(row=0, column=0)
+            tk.Label(frame, text="Tipo").grid(row=0, column=1)
+            tk.Label(frame, text="Valor").grid(row=0, column=2)
+            tk.Label(frame, text="Stock").grid(row=0, column=3)
         elif tabla == 'cliente':
-            tk.Label(frame, text="Nombre").grid(row=0, column=0)
-            tk.Label(frame, text="RUT").grid(row=0, column=1)
+            tk.Label(frame, text="RUT").grid(row=0, column=0)
+            tk.Label(frame, text="Nombre").grid(row=0, column=1)
             tk.Label(frame, text="Empresa").grid(row=0, column=2)
             tk.Label(frame, text="Comuna").grid(row=0, column=3)
             tk.Label(frame, text="Numero").grid(row=0, column=4)
@@ -225,7 +228,7 @@ def main():
                 tk.Label(frame, text=word).grid(row=i, column=j, padx=10, sticky=tk.W)
             if getProfile(state.username) == 'Administrador':
                 if tabla == 'usuario':
-                    if elemento.perfil != "Administrador":
+                    if elemento[3] != "Administrador":
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Eliminar",
                                   command=lambda elemento=elemento:
@@ -267,7 +270,8 @@ def main():
         else:
             m = "Transferencia"
         newClient = Cliente(nombre, rut, empresa, ciudad, telefono, mail, m)
-        clientList.append(newClient)
+        db.ingresar('cliente', ('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
+                    newClient.__repr__())
         loggedInWindow()
 
     def registerClientWindow(rut="", name="", empresa="", comuna="", numero="", mail="", modo=1):
