@@ -1,6 +1,3 @@
-from database import *
-
-
 class Cliente:
     def __init__(self, nombre, rut, empresa, comuna, numero, email, metodo_pago):
         self.nombre = nombre
@@ -21,7 +18,6 @@ class Usuario:
         self.nombre = nombre
         self.password = password
         self.perfil = perfil
-        ingresar('usuario', ('username', 'nombre', 'contraseña', 'perfil'), (username, nombre, password, perfil))
 
     def __repr__(self):
         return self.username, self.nombre, self.perfil
