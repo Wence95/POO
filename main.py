@@ -9,20 +9,17 @@ from database import *
 def main():
     db = BaseDatos()
     state = State()
-    eventList = []
-    itemList = []
-    clientList = []
 
-    itemList.append(Producto("Canape", 500))
-    itemList.append(Producto("Minipizza", 1000))
-    itemList.append(Producto("Miniempanada", 1000))
-    itemList.append(Producto("Sushi", 1000))
-    itemList.append(Producto("Minichacarero", 1000))
-    itemList.append(Producto("Jugo", 500))
-    itemList.append(Producto("Bebida", 500))
-    itemList.append(Producto("Pisco sour", 1500))
-    itemList.append(Producto("Champagne", 1500))
-    itemList.append(Producto("Vino", 2000))
+    # itemList.append(Producto("Canape", 500))
+    # itemList.append(Producto("Minipizza", 1000))
+    # itemList.append(Producto("Miniempanada", 1000))
+    # itemList.append(Producto("Sushi", 1000))
+    # itemList.append(Producto("Minichacarero", 1000))
+    # itemList.append(Producto("Jugo", 500))
+    # itemList.append(Producto("Bebida", 500))
+    # itemList.append(Producto("Pisco sour", 1500))
+    # itemList.append(Producto("Champagne", 1500))
+    # itemList.append(Producto("Vino", 2000))
 
     def getProfile(usuario):
         profile = db.seleccionarBD('perfil', 'usuario', "username='"+usuario+"'")
@@ -422,7 +419,7 @@ def main():
 
     def agregarProducto(tipo, valor, stock=9999):
         newProduct = Producto(tipo, valor, stock)
-        itemList.append(newProduct)
+        db.ingresar('producto', ('tipo', 'valor', 'stock'), (tipo, valor, stock))
         loggedInWindow()
 
     def agregarProductoWindow(nombre="", precio="", stock=""):
