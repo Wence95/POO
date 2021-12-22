@@ -15,17 +15,20 @@ class BaseDatos:
     def seleccionarBD(self, columns, tabla, conditions):
         i = 0
         columnString = ''
-        for col in columns:
-            if i >= 1:
-                columnString += ','
-            columnString = columnString + col
-            i += 1
+        if type(columns) is not str:
+            for col in columns:
+                if i >= 1:
+                    columnString += ','
+                columnString = columnString + col
+                i += 1
+        else:
+            columnString = columns
         sql = 'select {} from {} where {}'.format(columnString, tabla, conditions)
         print(sql)
         try:
             self.cursor.execute(sql)
-            usuario = self.cursor.fetchone()
-            print(usuario)
+            request = self.cursor.fetchone()
+            return request
 
         except Exception as e:
             raise

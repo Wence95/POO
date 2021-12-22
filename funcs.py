@@ -6,10 +6,10 @@ def checkUserPass(usuario, password, listado):
     return False
 
 
-def getProfile(usuario, listado):
-    for user in listado:
-        if usuario == user.username:
-            return user.perfil
+# def getProfile(usuario, listado):
+#     for user in listado:
+#         if usuario == user.username:
+#             return user.perfil
 
 
 def callback(i):

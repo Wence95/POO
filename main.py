@@ -11,7 +11,6 @@ def main():
     state = State()
     eventList = []
     itemList = []
-    listadoUsers = []
     clientList = []
 
     itemList.append(Producto("Canape", 500))
@@ -25,6 +24,9 @@ def main():
     itemList.append(Producto("Champagne", 1500))
     itemList.append(Producto("Vino", 2000))
 
+    def getProfile(usuario):
+        profile = db.seleccionarBD('perfil', 'usuario', "username='"+usuario+"'")
+        return profile[0]
     def clearWindow():
         for widgets in frame.winfo_children():
             widgets.destroy()
@@ -43,7 +45,8 @@ def main():
             widgets.destroy()
         userpass = db.seleccionarBD(('username', 'contraseña'), 'usuario',
                          "username='"+username+"' AND contraseña='"+password+"'")
-        if len(userpass) == 1:
+        print(userpass)
+        if userpass is not None:
             state.username = username
             state.estado = True
             loggedInWindow()
@@ -94,7 +97,7 @@ def main():
         else:
             perfil = "Gestor"
         newUser = Usuario(username, nombre, password, perfil)
-        listadoUsers.append(newUser)
+        db.ingresar('usuario', ('username', 'nombre', 'contraseña', 'perfil'), newUser.__repr__())
         loggedInWindow()
 
     def signUpWindow(o=1, user="", name=""):
@@ -454,7 +457,7 @@ def main():
         saludo.pack()
         tk.Label(frame).pack()
 
-        if getProfile(state.username, listadoUsers) == 'Funcionario':
+        if getProfile(state.username) == 'Funcionario':
             eventFrame = tk.Frame(frame)
             eventFrame.pack(pady=10)
             botonNewEvent = tk.Button(eventFrame, text="Nuevo evento", command=registrarEventoWindow)
@@ -462,7 +465,7 @@ def main():
             botonEventList = tk.Button(eventFrame, text="Ver lista de eventos", command=lambda: mostrarLista(eventList))
             botonEventList.pack()
 
-        if getProfile(state.username, listadoUsers) == 'Gestor':
+        if getProfile(state.username) == 'Gestor':
             botonListadoUsers = tk.Button(frame, text="Ver usuarios", command=lambda: mostrarLista(listadoUsers))
             botonListadoUsers.pack()
 
@@ -476,7 +479,7 @@ def main():
                                         command=lambda: mostrarLista(clientList))
             botonClientList.pack()
 
-        if getProfile(state.username, listadoUsers) == 'Administrador':
+        if getProfile(state.username) == 'Administrador':
             userFrame = tk.Frame(frame)
             userFrame.pack(pady=10)
             botonRegistro = tk.Button(userFrame, text="Registrar usuario", command=signUpWindow)
