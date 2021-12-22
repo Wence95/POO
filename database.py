@@ -25,15 +25,23 @@ class BaseDatos:
         except Exception as e:
             raise
 
-    def ingresar(self, tabla, values):
+    def ingresar(self, tabla, columns, values):
         i = 0
         valueString = ''
+        columnString = ''
         for val in values:
             if i >= 1:
                 valueString += ','
-            valueString += valueString + val
+            valueString = valueString + "'" + val + "'"
             i += 1
-        sql = "insert into {} (id,nombre,edad) values ({})".format(id,tabla, valueString)
+        j = 0
+        for col in columns:
+            if j >= 1:
+                columnString += ','
+            columnString = columnString + col
+            j += 1
+        sql = "insert into {} ({}) values ({})".format(tabla,columnString, valueString)
+        print(sql)
         try:
             self.cursor.execute(sql)
             self.conexion.commit()
@@ -63,4 +71,4 @@ class BaseDatos:
 
 
 basedat = BaseDatos()
-basedat.ingresar('usuario', ('pepe', 'pepe', 'pepe', 'pepe'))
+basedat.ingresar('usuario', ('username','nombre','contraseña','perfil'), ('pepe', 'pepe', 'pepe', 'pepe'))
