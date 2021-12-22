@@ -41,7 +41,7 @@ def main():
         # Evitar repetición de mensaje "Usuario o contraseña inválidos"
         for widgets in msg.winfo_children():
             widgets.destroy()
-        db.seleccionarBD(('username', 'contraseña'), 'usuario', 'username='+username+' AND contraseña='+password)
+        db.seleccionarBD(('username', 'contraseña'), 'usuario', "username='"+username+"' AND contraseña='"+password+"'")
         # if checkUserPass(username, password, listadoUsers):
         #     state.username = username
         #     state.estado = True
