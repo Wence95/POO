@@ -3,9 +3,11 @@ import pymysql
 
 from classes import *
 from funcs import *
+from database import *
 
 
 def main():
+    db = BaseDatos()
     state = State()
     eventList = []
     itemList = []

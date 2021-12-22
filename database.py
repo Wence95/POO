@@ -70,5 +70,4 @@ class BaseDatos:
         self.conexion.close()
 
 
-basedat = BaseDatos()
 basedat.ingresar('usuario', ('username','nombre','contraseña','perfil'), ('pepe', 'pepe', 'pepe', 'pepe'))
