@@ -504,7 +504,7 @@ def main():
         boton.pack()
 
     admin = Usuario('admin', 'admin', '0000', 'Administrador')
-
+    db.ingresar('usuario', ('username', 'nombre','contraseña', 'perfil'), admin.__repr__())
     listadoUsers.append(admin)
 
     ventana = tk.Tk()
