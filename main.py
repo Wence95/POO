@@ -85,7 +85,7 @@ def main():
             registrarEventoWindow(elemento.rut, elemento.nombre, str(elemento.asistencia),
                                   elemento.fecha, elemento.hora)
         if type(elemento) is Usuario:
-            if elemento.perfil == "Funcionaro":
+            if elemento.perfil == "Funcionario":
                 p = 1
             else:
                 p = 2
