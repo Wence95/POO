@@ -27,6 +27,7 @@ def main():
     def getProfile(usuario):
         profile = db.seleccionarBD('perfil', 'usuario', "username='"+usuario+"'")
         return profile[0]
+
     def clearWindow():
         for widgets in frame.winfo_children():
             widgets.destroy()
@@ -54,6 +55,7 @@ def main():
         #     state.username = username
         #     state.estado = True
         #     loggedInWindow()
+
         else:
             etiqueta = tk.Label(msg)
             etiqueta.pack()
@@ -189,68 +191,68 @@ def main():
                                                                              product.get(), evento, lista))
         boton1.pack()
 
-    def mostrarLista(lista):
+    def mostrarLista(tabla):
         clearWindow()
         i = 0
-        if len(lista) > 0:
-            if type(lista[0]) is Usuario:
-                tk.Label(frame, text="Usuario").grid(row=0, column=0)
-                tk.Label(frame, text="Nombre").grid(row=0, column=1)
-                tk.Label(frame, text="Perfil").grid(row=0, column=2)
-            elif type(lista[0]) is Evento:
-                tk.Label(frame, text="Evento").grid(row=0, column=0)
-                tk.Label(frame, text="Asistencia").grid(row=0, column=1)
-                tk.Label(frame, text="Fecha").grid(row=0, column=2)
-                tk.Label(frame, text="Hora").grid(row=0, column=3)
-            elif type(lista[0]) is Producto:
-                tk.Label(frame, text="Tipo").grid(row=0, column=0)
-                tk.Label(frame, text="Valor").grid(row=0, column=1)
-                tk.Label(frame, text="Stock").grid(row=0, column=2)
-            elif type(lista[0]) is Cliente:
-                tk.Label(frame, text="Nombre").grid(row=0, column=0)
-                tk.Label(frame, text="RUT").grid(row=0, column=1)
-                tk.Label(frame, text="Empresa").grid(row=0, column=2)
-                tk.Label(frame, text="Comuna").grid(row=0, column=3)
-                tk.Label(frame, text="Numero").grid(row=0, column=4)
-                tk.Label(frame, text="email").grid(row=0, column=5)
-                tk.Label(frame, text="Método de pago").grid(row=0, column=6)
+        if tabla == 'usuario':
+            tk.Label(frame, text="Usuario").grid(row=0, column=0)
+            tk.Label(frame, text="Nombre").grid(row=0, column=1)
+            tk.Label(frame, text="Perfil").grid(row=0, column=2)
+        elif tabla == 'evento':
+            tk.Label(frame, text="Evento").grid(row=0, column=0)
+            tk.Label(frame, text="Asistencia").grid(row=0, column=1)
+            tk.Label(frame, text="Fecha").grid(row=0, column=2)
+            tk.Label(frame, text="Hora").grid(row=0, column=3)
+        elif tabla == 'producto':
+            tk.Label(frame, text="Tipo").grid(row=0, column=0)
+            tk.Label(frame, text="Valor").grid(row=0, column=1)
+            tk.Label(frame, text="Stock").grid(row=0, column=2)
+        elif tabla == 'cliente':
+            tk.Label(frame, text="Nombre").grid(row=0, column=0)
+            tk.Label(frame, text="RUT").grid(row=0, column=1)
+            tk.Label(frame, text="Empresa").grid(row=0, column=2)
+            tk.Label(frame, text="Comuna").grid(row=0, column=3)
+            tk.Label(frame, text="Numero").grid(row=0, column=4)
+            tk.Label(frame, text="email").grid(row=0, column=5)
+            tk.Label(frame, text="Método de pago").grid(row=0, column=6)
 
-            for elemento in lista:
-                i += 1
-                j = -1
-                for word in elemento.__repr__():
-                    j += 1
-                    tk.Label(frame, text=word).grid(row=i, column=j, padx=10, sticky=tk.W)
-                if getProfile(state.username, listadoUsers) == 'Administrador':
-                    if type(elemento) is Usuario:
-                        if elemento.perfil != "Administrador":
-                            # noinspection PyShadowingNames
-                            tk.Button(frame, text="Eliminar",
-                                      command=lambda elemento=elemento:
-                                      eliminarElemento(elemento, lista)).grid(row=i, column=j+1)
-                            # noinspection PyShadowingNames
-                            tk.Button(frame, text="Editar",
-                                      command=lambda elemento=elemento:
-                                      editarElemento(elemento, lista)).grid(row=i, column=j+2)
-                    else:
+        lista = db.seleccionarTabla(tabla)
+        for elemento in lista:
+            i += 1
+            j = -1
+            for word in elemento:
+                j += 1
+                tk.Label(frame, text=word).grid(row=i, column=j, padx=10, sticky=tk.W)
+            if getProfile(state.username) == 'Administrador':
+                if tabla == 'usuario':
+                    if elemento.perfil != "Administrador":
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Eliminar",
                                   command=lambda elemento=elemento:
-                                  eliminarElemento(elemento, lista)).grid(row=i, column=j + 1)
+                                  eliminarElemento(elemento, lista)).grid(row=i, column=j+1)
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Editar",
-                                  command=lambda elemento=elemento: editarElemento(elemento, lista)).grid(row=i,
-                                                                                                          column=j + 2)
+                                  command=lambda elemento=elemento:
+                                  editarElemento(elemento, lista)).grid(row=i, column=j+2)
+                else:
+                    # noinspection PyShadowingNames
+                    tk.Button(frame, text="Eliminar",
+                              command=lambda elemento=elemento:
+                              eliminarElemento(elemento, lista)).grid(row=i, column=j + 1)
+                    # noinspection PyShadowingNames
+                    tk.Button(frame, text="Editar",
+                              command=lambda elemento=elemento: editarElemento(elemento, lista)).grid(row=i,
+                                                                                                      column=j + 2)
 
-                if not (getProfile(state.username, listadoUsers) == "Gestor"):
-                    if type(elemento) is Evento:
-                        # noinspection PyShadowingNames
-                        tk.Button(frame, text="Agregar producto",
-                                  command=lambda elemento=elemento: producto_evento(elemento,
-                                                                                    lista)).grid(row=i, column=j + 3)
-                        # noinspection PyShadowingNames
-                        tk.Button(frame, text="Detalle",
-                                  command=lambda elemento=elemento: detalleEvento(elemento)).grid(row=i, column=j + 4)
+            if not (getProfile(state.username) == "Gestor"):
+                if tabla == 'evento':
+                    # noinspection PyShadowingNames
+                    tk.Button(frame, text="Agregar producto",
+                              command=lambda elemento=elemento: producto_evento(elemento,
+                                                                                lista)).grid(row=i, column=j + 3)
+                    # noinspection PyShadowingNames
+                    tk.Button(frame, text="Detalle",
+                              command=lambda elemento=elemento: detalleEvento(elemento)).grid(row=i, column=j + 4)
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
@@ -462,21 +464,21 @@ def main():
             eventFrame.pack(pady=10)
             botonNewEvent = tk.Button(eventFrame, text="Nuevo evento", command=registrarEventoWindow)
             botonNewEvent.pack()
-            botonEventList = tk.Button(eventFrame, text="Ver lista de eventos", command=lambda: mostrarLista(eventList))
+            botonEventList = tk.Button(eventFrame, text="Ver lista de eventos", command=lambda: mostrarLista('evento'))
             botonEventList.pack()
 
         if getProfile(state.username) == 'Gestor':
-            botonListadoUsers = tk.Button(frame, text="Ver usuarios", command=lambda: mostrarLista(listadoUsers))
+            botonListadoUsers = tk.Button(frame, text="Ver usuarios", command=lambda: mostrarLista('usuario'))
             botonListadoUsers.pack()
 
-            botonEventList = tk.Button(frame, text="Ver lista de eventos", command=lambda: mostrarLista(eventList))
+            botonEventList = tk.Button(frame, text="Ver lista de eventos", command=lambda: mostrarLista('evento'))
             botonEventList.pack()
 
-            botonItemList = tk.Button(frame, text="Ver lista de productos", command=lambda: mostrarLista(itemList))
+            botonItemList = tk.Button(frame, text="Ver lista de productos", command=lambda: mostrarLista('producto'))
             botonItemList.pack()
 
             botonClientList = tk.Button(frame, text="Ver lista de clientes",
-                                        command=lambda: mostrarLista(clientList))
+                                        command=lambda: mostrarLista('cliente'))
             botonClientList.pack()
 
         if getProfile(state.username) == 'Administrador':
@@ -484,21 +486,21 @@ def main():
             userFrame.pack(pady=10)
             botonRegistro = tk.Button(userFrame, text="Registrar usuario", command=signUpWindow)
             botonRegistro.pack()
-            botonListadoUsers = tk.Button(userFrame, text="Ver usuarios", command=lambda: mostrarLista(listadoUsers))
+            botonListadoUsers = tk.Button(userFrame, text="Ver usuarios", command=lambda: mostrarLista('usuario'))
             botonListadoUsers.pack()
 
             eventFrame = tk.Frame(frame)
             eventFrame.pack(pady=10)
             botonNewEvent = tk.Button(eventFrame, text="Nuevo evento", command=registrarEventoWindow)
             botonNewEvent.pack()
-            botonEventList = tk.Button(eventFrame, text="Ver lista de eventos", command=lambda: mostrarLista(eventList))
+            botonEventList = tk.Button(eventFrame, text="Ver lista de eventos", command=lambda: mostrarLista('evento'))
             botonEventList.pack()
 
             itemFrame = tk.Frame(frame)
             itemFrame.pack(pady=10)
             botonAgregarProducto = tk.Button(itemFrame, text="Nuevo producto", command=agregarProductoWindow)
             botonAgregarProducto.pack()
-            botonItemList = tk.Button(itemFrame, text="Ver lista de productos", command=lambda: mostrarLista(itemList))
+            botonItemList = tk.Button(itemFrame, text="Ver lista de productos", command=lambda: mostrarLista('producto'))
             botonItemList.pack()
 
             clientFrame = tk.Frame(frame)
@@ -506,7 +508,7 @@ def main():
             botonRegistrarCliente = tk.Button(clientFrame, text="Registrar cliente", command=registerClientWindow)
             botonRegistrarCliente.pack()
             botonClientList = tk.Button(clientFrame, text="Ver lista de clientes",
-                                        command=lambda: mostrarLista(clientList))
+                                        command=lambda: mostrarLista('cliente'))
             botonClientList.pack()
 
         boton = tk.Button(auxFrame, text="Cerrar sesión", command=logOut)

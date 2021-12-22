@@ -12,6 +12,16 @@ class BaseDatos:
         self.cursor = self.conexion.cursor()
         print("Conexion bd correcta")
 
+    def seleccionarTabla(self, tabla):
+        sql = 'select * from {}'.format(tabla)
+        try:
+            self.cursos.execute(sql)
+            request = self.cursos.fetchall()
+            return request
+
+        except Exception as e:
+            raise
+
     def seleccionarBD(self, columns, tabla, conditions):
         i = 0
         columnString = ''
