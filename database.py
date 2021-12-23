@@ -82,8 +82,8 @@ class BaseDatos:
         except Exception as e:
             raise
 
-    def borrar(self,id):
-        sql = "delete from registro where id = {}".format(id)
+    def borrar(self, value, column, tabla):
+        sql = "delete from {} where {} = {}".format(tabla, column, value)
         try:
             self.cursor.execute(sql)
             self.conexion.commit()

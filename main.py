@@ -58,12 +58,11 @@ def main():
             etiqueta.pack()
             etiqueta["text"] = "Usuario o contraseña inválidos"
 
-    def eliminarElemento(elemento, lista):
-        for e in lista:
-            for word in e.__repr__():
-                print(word)
-        lista.remove(elemento)
-        mostrarLista(lista)
+    def eliminarElemento(tabla, elemento):
+        if tabla == 'cliente':
+            db.borrar(elemento, 'rut', tabla)
+        else:
+            db.borrar(elemento, 'id', tabla)
 
     def editarElemento(elemento, lista):
         lista.remove(elemento)
@@ -229,7 +228,7 @@ def main():
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Eliminar",
                                   command=lambda elemento=elemento:
-                                  eliminarElemento(elemento, lista)).grid(row=i, column=j+1)
+                                  eliminarElemento(tabla, elemento[0])).grid(row=i, column=j+1)
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Editar",
                                   command=lambda elemento=elemento:
@@ -238,7 +237,7 @@ def main():
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Eliminar",
                               command=lambda elemento=elemento:
-                              eliminarElemento(elemento, lista)).grid(row=i, column=j + 1)
+                              eliminarElemento(tabla, elemento[0])).grid(row=i, column=j+1)
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Editar",
                               command=lambda elemento=elemento: editarElemento(elemento, lista)).grid(row=i,
