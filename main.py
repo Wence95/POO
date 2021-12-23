@@ -61,6 +61,10 @@ def main():
     def eliminarElemento(tabla, elemento):
         if tabla == 'cliente':
             db.borrar(elemento, 'rut', tabla)
+        elif tabla == 'evento':
+            db.borrar(elemento, 'id_evento', tabla)
+        elif tabla == 'producto':
+            db.borrar(elemento, 'id_producto', tabla)
         else:
             db.borrar(elemento, 'id', tabla)
 
