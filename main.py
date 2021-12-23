@@ -273,7 +273,7 @@ def main():
         else:
             m = "Transferencia"
         newClient = Cliente(nombre, rut, empresa, ciudad, telefono, mail, m)
-        db.actualizar('cliente', ('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
+        db.actualizar('cliente', ('rut', 'nombre', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
                     newClient.__repr__(), id)
         loggedInWindow()
 

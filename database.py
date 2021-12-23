@@ -91,7 +91,8 @@ class BaseDatos:
         elif tabla == 'usuario':
             sql = "update {} set {} where id={}".format(tabla, setString, id)
         else:
-            sql = "update {} set {} where rut={}".format(tabla, setString, id)
+            sql = "update {} set {} where rut='{}'".format(tabla, setString, id)
+        print(sql)
         try:
             self.cursor.execute(sql)
             self.conexion.commit()
