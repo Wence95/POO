@@ -223,11 +223,11 @@ def main():
         minimo = db.seleccionarBD('asistencia', 'evento', 'id_evento='+str(evento)) * 3
         product = tk.StringVar()
         cant = tk.StringVar()
-        itemList = db.seleccionarTabla(tabla)
+        itemList = db.seleccionarTabla('producto')
         for producto in itemList:
-            plist.append(producto.tipo)
+            plist.append(producto[1])
         tk.OptionMenu(frame, product, *plist).pack()
-        for i in range(minimo-1, 3500):
+        for i in range(minimo[0] -1, 3500):
             nlist.append(str(i+1))
         tk.OptionMenu(frame, cant, *nlist).pack()
 

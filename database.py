@@ -17,6 +17,7 @@ class BaseDatos:
             sql = 'select * from {}'.format(tabla)
         else:
             sql = 'select id, username, nombre, perfil from usuario'
+        print(sql)
         try:
             self.cursor.execute(sql)
             request = self.cursor.fetchall()
