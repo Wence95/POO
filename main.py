@@ -70,7 +70,7 @@ def main():
         if tabla != 'evento_producto':
             mostrarLista(tabla)
         else:
-            detalleEvento()
+            loggedInWindow()
 
     def editarElemento(elemento, tabla):
         if tabla == 'producto':
@@ -152,17 +152,18 @@ def main():
         boton2.pack(side=tk.BOTTOM)
 
     def graficarProducto(producto):
-        stock = db.seleccionarBD('stock', 'producto', "tipo='"+producto+"'")
+        stock = db.seleccionarBD('stock', 'producto', "id_producto='"+str(producto)+"'")[0]
         request = db.seleccionarBD2(('nombre', 'cantidad'), "evento INNER JOIN evento_producto ON"
                                                   " evento.id_evento=evento_producto.id_evento"
                                                   " INNER JOIN producto ON producto.id_producto"
                                                   "= evento_producto.id_producto",
-                          "tipo='"+producto+"'")
+                          "producto.id_producto="+str(producto))
         eventos = []
         cantidades = []
         for nomcan in request:
             eventos.append(nomcan[0])
-            cantidades.append(nomcan[0])
+            cantidades.append(nomcan[1])
+        print(request)
         pieGraph(stock, eventos, cantidades)
 
     def signUpWindow(o=1, user="", name=""):
@@ -246,14 +247,15 @@ def main():
         plist = []
         nlist = []
 
-        minimo = db.seleccionarBD('asistencia', 'evento', 'id_evento='+str(evento)) * 3
+        minimo = db.seleccionarBD('asistencia', 'evento', 'id_evento='+str(evento))[0] * 3
+        print(minimo)
         product = tk.StringVar()
         cant = tk.StringVar()
         itemList = db.seleccionarTabla('producto')
         for producto in itemList:
             plist.append(producto[1])
         tk.OptionMenu(frame, product, *plist).pack()
-        for i in range(minimo[0] -1, 3500):
+        for i in range(minimo, 3500):
             nlist.append(str(i+1))
         tk.OptionMenu(frame, cant, *nlist).pack()
 
@@ -318,7 +320,7 @@ def main():
                                                                                                       column=j + 2)
             if tabla == 'producto':
                 tk.Button(frame, text="Detalle stock", command=lambda elemento=elemento:
-                          graficarProducto(elemento[0]))
+                          graficarProducto(elemento[0])).grid(row=i, column=j+3)
 
             if not (getProfile(state.username) == "Gestor"):
                 if tabla == 'evento':
