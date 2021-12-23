@@ -42,7 +42,7 @@ def main():
         for widgets in msg.winfo_children():
             widgets.destroy()
         userpass = db.seleccionarBD(('username', 'contraseña'), 'usuario',
-                         "username='"+username+"' AND contraseña='"+password+"'")
+                                    "username='"+username+"' AND contraseña='"+password+"'")
         print(userpass)
         if userpass is not None:
             state.username = username
@@ -90,12 +90,22 @@ def main():
             valores = db.seleccionarBD(('rut', 'nombre', 'asistencia', 'fecha'), tabla, "id_evento="+str(elemento))
             editEventoWindow(elemento, valores[0], valores[1], str(valores[2]),
                                   valores[3])
-        if tabla == 'usuario':
-            if elemento.perfil == "Funcionario":
+        else:
+            valores = db.seleccionarBD(('perfil', 'username', 'nombre'), 'usuario', "id="+str(elemento))
+            if valores[0] == "Funcionario":
                 p = 1
             else:
                 p = 2
-            signUpWindow(p, elemento.username, elemento.nombre)
+            editUserWindow(elemento, p, valores[1], valores[2])
+
+    def editUser(_id, nombre, username, password, option):
+        if option.get() == 1:
+            perfil = "Funcionario"
+        else:
+            perfil = "Gestor"
+        db.actualizar('usuario', ('username', 'nombre', 'contraseña', 'perfil'),
+                      (nombre, username, password, perfil), _id)
+        loggedInWindow()
 
     def signUp(nombre, username, password, option):
         if option.get() == 1:
@@ -105,6 +115,38 @@ def main():
         newUser = Usuario(username, nombre, password, perfil)
         db.ingresar('usuario', ('username', 'nombre', 'contraseña', 'perfil'), newUser.__repr__())
         loggedInWindow()
+
+    def editUserWindow(id, o=1, user="", name=""):
+        clearWindow()
+        option = tk.IntVar()
+        option.set(o)
+        upperFrame = tk.Frame(frame)
+
+        upperFrame.pack(side=tk.TOP)
+        tk.Radiobutton(upperFrame, text="Funcionario", variable=option, value=1).pack(side=tk.LEFT)
+        tk.Radiobutton(upperFrame, text="Gestor de informes", variable=option, value=2).pack(side=tk.LEFT)
+
+        tk.Label(frame, text="Ingrese nuevo nombre de usuario").pack()
+        caja_user = tk.Entry(frame)
+        caja_user.insert(tk.END, user)
+        caja_user.pack()
+
+        tk.Label(frame, text="Ingrese contraseña").pack()
+        caja_pass = tk.Entry(frame, show="*")
+
+        caja_pass.pack()
+
+        tk.Label(frame, text="Ingrese nombre completo").pack()
+        caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, name)
+        caja_name.pack()
+
+        boton1 = tk.Button(frame, text="Aceptar", command=lambda: editUser(id, caja_name.get(),
+                                                                         caja_user.get(), caja_pass.get(), option))
+        boton1.pack()
+
+        boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
+        boton2.pack(side=tk.BOTTOM)
 
     def signUpWindow(o=1, user="", name=""):
         clearWindow()
