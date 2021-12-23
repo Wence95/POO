@@ -86,9 +86,10 @@ def main():
                 modo = 4
             editClientWindow(elemento, valores[0], valores[1], valores[2],
                                  valores[3], valores[4], valores[5], modo)
-        if tabla == 'evento':
-            registrarEventoWindow(elemento.rut, elemento.nombre, str(elemento.asistencia),
-                                  elemento.fecha, elemento.hora)
+        elif tabla == 'evento':
+            valores = db.seleccionarBD(('rut', 'nombre', 'asistencia', 'fecha'))
+            editEventoWindow(valores[0], valores[1], str(valores[2]),
+                                  valores[3])
         if tabla == 'usuario':
             if elemento.perfil == "Funcionario":
                 p = 1
@@ -393,6 +394,13 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
+    def registrarEvento(id, nombre, asistencia, fecha_hora, _rut):
+        db.actualizar('evento', ('nombre', 'asistencia', 'fecha', 'rut'), (nombre, asistencia, fecha_hora, _rut), id)
+        # if bul:
+        #    loggedInWindow()
+        # else:
+        #    registerClientWindow(_rut)
+
     def registrarEvento(nombre, asistencia, fecha_hora, _rut):
         db.ingresar('evento', ('nombre', 'asistencia', 'fecha', 'rut'),(nombre, asistencia, fecha_hora, _rut))
         # if bul:
@@ -400,7 +408,42 @@ def main():
         # else:
         #    registerClientWindow(_rut)
 
-    def registrarEventoWindow(rut="", event="", asis="", mes="Enero", dia="1", hora="10:00"):
+    def editEventoWindow(id, rut="", event="", asis="", fecha="2022-01-01 10:00:00", mes="Enero", dia="1", hora="10:00"):
+        clearWindow()
+
+        tk.Label(frame, text="Ingrese rut del cliente que hace la reserva, sin puntos y con guion").pack()
+        caja_rut = tk.Entry(frame)
+        caja_rut.insert(tk.END, rut)
+        caja_rut.pack()
+
+        tk.Label(frame, text="Ingrese nombre del nuevo evento").pack()
+        caja_event = tk.Entry(frame)
+        caja_event.insert(tk.END, event)
+        caja_event.pack()
+
+        tk.Label(frame, text="Ingrese cantidad de asistentes").pack()
+        caja_asis = tk.Entry(frame)
+        caja_asis.insert(tk.END, asis)
+        caja_asis.pack()
+        reg = ventana.register(callback)
+        caja_asis.config(validate="key", validatecommand=(reg, '%P'))
+
+        # timeFrame = tk.Frame(frame)
+        tk.Label(frame, text="Ingrese fecha y hora del evento (YYYY-MM-DD HH:MI:SS)").pack()
+        caja_time = tk.Entry(frame)
+        caja_time.insert(tk.END, fecha)
+        caja_time.pack()
+
+        boton1 = tk.Button(frame, text="Aceptar", command=lambda: registrarEvento(id, caja_event.get(),
+                                                                                  int(caja_asis.get()),
+                                                                                  caja_time.get(),
+                                                                                  caja_rut.get()))
+        boton1.pack()
+
+        boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
+        boton2.pack(side=tk.BOTTOM)
+
+    def registrarEventoWindow(rut="", event="", asis="", fecha="2022-01-01 10:00:00"):
         # _day = "0"
         #
         # def setDay(dia):
@@ -450,7 +493,7 @@ def main():
         # timeFrame = tk.Frame(frame)
         tk.Label(frame, text="Ingrese fecha y hora del evento (YYYY-MM-DD HH:MI:SS)").pack()
         caja_time = tk.Entry(frame)
-        caja_time.insert(tk.END, event)
+        caja_time.insert(tk.END, fecha)
         caja_time.pack()
         # monthChoices = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
         #                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
