@@ -73,17 +73,19 @@ def main():
         if tabla == 'producto':
             valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id_producto='"+str(elemento)+"'")
             editarProductoWindow(elemento, valores[0], valores[1], valores[2])
-        if tabla == 'cliente':
-            if elemento.metodo == "Tarjeta":
+        elif tabla == 'cliente':
+            valores = db.seleccionarBD(('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
+                                       tabla, "rut='" + str(elemento) + "'")
+            if valores[6] == "Tarjeta":
                 modo = 1
-            elif elemento.metodo == "Efectivo":
+            elif valores[6] == "Efectivo":
                 modo = 2
-            elif elemento.metodo == "Cheque":
+            elif valores[6] == "Cheque":
                 modo = 3
             else:
                 modo = 4
-            registerClientWindow(elemento.nombre, elemento.rut, elemento.empresa,
-                                 elemento.comuna, elemento.numero, elemento.email, modo)
+            editClientWindow(elemento, valores[0], valores[1], valores[2],
+                                 valores[3], valores[4], valores[5], modo)
         if tabla == 'evento':
             registrarEventoWindow(elemento.rut, elemento.nombre, str(elemento.asistencia),
                                   elemento.fecha, elemento.hora)
@@ -261,6 +263,20 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
+    def updateClient(nombre, rut, empresa, mail, ciudad, telefono, metodo, id):
+        if metodo == 1:
+            m = "Tarjeta"
+        elif metodo == 2:
+            m = "Efectivo"
+        elif metodo == 3:
+            m = "Cheque"
+        else:
+            m = "Transferencia"
+        newClient = Cliente(nombre, rut, empresa, ciudad, telefono, mail, m)
+        db.actualizar('cliente', ('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
+                    newClient.__repr__(), id)
+        loggedInWindow()
+
     def registerClient(nombre, rut, empresa, mail, ciudad, telefono, metodo):
         if metodo == 1:
             m = "Tarjeta"
@@ -274,6 +290,57 @@ def main():
         db.ingresar('cliente', ('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
                     newClient.__repr__())
         loggedInWindow()
+
+    def editClientWindow(id, rut="", name="", empresa="", comuna="", numero="", mail="", modo=1):
+        clearWindow()
+
+        tk.Label(frame, text="Ingrese rut del cliente").pack()
+        caja_rut = tk.Entry(frame)
+        caja_rut.insert(tk.END, rut)
+        caja_rut.pack()
+
+        tk.Label(frame, text="Ingrese nombre del cliente").pack()
+        caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, name)
+        caja_name.pack()
+
+        tk.Label(frame, text="Ingrese empresa").pack()
+        caja_empresa = tk.Entry(frame)
+        caja_empresa.insert(tk.END, empresa)
+        caja_empresa.pack()
+
+        tk.Label(frame, text="Ingrese comuna").pack()
+        caja_city = tk.Entry(frame)
+        caja_city.insert(tk.END, comuna)
+        caja_city.pack()
+
+        tk.Label(frame, text="Ingrese número de teléfono").pack()
+        caja_phone = tk.Entry(frame)
+        caja_phone.insert(tk.END, numero)
+        caja_phone.pack()
+
+        tk.Label(frame, text="Ingrese mail").pack()
+        caja_mail = tk.Entry(frame)
+        caja_mail.insert(tk.END, mail)
+        caja_mail.pack()
+
+        option = tk.IntVar()
+        paymentFrame = tk.Frame(frame)
+        paymentFrame.pack()
+        tk.Radiobutton(paymentFrame, text="Tarjeta", variable=option, value=1).pack(side=tk.LEFT)
+        tk.Radiobutton(paymentFrame, text="Efectivo", variable=option, value=2).pack(side=tk.LEFT)
+        tk.Radiobutton(paymentFrame, text="Cheque", variable=option, value=3).pack(side=tk.LEFT)
+        tk.Radiobutton(paymentFrame, text="Transferencia", variable=option, value=4).pack(side=tk.LEFT)
+        option.set(modo)
+
+        boton1 = tk.Button(frame, text="Editar", command=lambda: updateClient(caja_name.get(),
+                                                                                 caja_rut.get(), caja_empresa.get(),
+                                                                                 caja_mail.get(), caja_city.get(),
+                                                                                 caja_phone.get(), option.get(), id))
+        boton1.pack()
+
+        boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
+        boton2.pack(side=tk.BOTTOM)
 
     def registerClientWindow(rut="", name="", empresa="", comuna="", numero="", mail="", modo=1):
         clearWindow()
