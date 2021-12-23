@@ -75,32 +75,34 @@ class BaseDatos:
 
     def actualizar(self,tabla, columns, values, id):
         i = 0
-        valueString = ''
-        columnString = ''
-        for val in values:
+        setString = ''
+        for i in range(len(values)):
             if i >= 1:
-                valueString += ','
-            if type(val) is str:
-                valueString = valueString + "'" + val + "'"
+                setString += ','
+            if type(values[i]) is str:
+                setString = setString + columns[i] + "='" + values[i] + "'"
             else:
-                valueString = valueString + str(val)
+                setString = setString + columns[i] + "=" + str(values[i])
             i += 1
-        j = 0
-        for col in columns:
-            if j >= 1:
-                columnString += ','
-            columnString = columnString + col
-            j += 1
-        sql = "update {} set {} = {} where id={}".format(tabla, columnString, valueString,id)
-
+        if tabla == 'producto':
+            sql = "update {} set {} where id_producto={}".format(tabla, setString, id)
+        elif tabla == 'evento':
+            sql = "update {} set {} where id_evento={}".format(tabla, setString, id)
+        elif tabla == 'usuario':
+            sql = "update {} set {} where id={}".format(tabla, setString, id)
+        else:
+            sql = "update {} set {} where rut={}".format(tabla, setString, id)
         try:
             self.cursor.execute(sql)
             self.conexion.commit()
         except Exception as e:
             raise
 
+
+
     def borrar(self, value, column, tabla):
         sql = "delete from {} where {} = {}".format(tabla, column, value)
+        print(sql)
         try:
             self.cursor.execute(sql)
             self.conexion.commit()

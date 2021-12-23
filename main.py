@@ -71,8 +71,8 @@ def main():
 
     def editarElemento(elemento, tabla):
         if tabla == 'producto':
-            valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id='"+str(elemento)+"'")
-            editarProductoWindow(valores[0], valores[1], valores[2])
+            valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id_producto='"+str(elemento)+"'")
+            editarProductoWindow(elemento, valores[0], valores[1], valores[2])
         if tabla == 'cliente':
             if elemento.metodo == "Tarjeta":
                 modo = 1
@@ -237,7 +237,7 @@ def main():
                         # noinspection PyShadowingNames
                         tk.Button(frame, text="Editar",
                                   command=lambda elemento=elemento:
-                                  editarElemento(elemento, lista)).grid(row=i, column=j+2)
+                                  editarElemento(elemento[0], tabla)).grid(row=i, column=j+2)
                 else:
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Eliminar",
@@ -245,18 +245,18 @@ def main():
                               eliminarElemento(tabla, elemento[0])).grid(row=i, column=j+1)
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Editar",
-                              command=lambda elemento=elemento: editarElemento(elemento, lista)).grid(row=i,
+                              command=lambda elemento=elemento: editarElemento(elemento[0], tabla)).grid(row=i,
                                                                                                       column=j + 2)
 
             if not (getProfile(state.username) == "Gestor"):
                 if tabla == 'evento':
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Agregar producto",
-                              command=lambda elemento=elemento: producto_evento(elemento,
-                                                                                lista)).grid(row=i, column=j + 3)
+                              command=lambda elemento=elemento: producto_evento(elemento[0],
+                                                                                tabla)).grid(row=i, column=j + 3)
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Detalle",
-                              command=lambda elemento=elemento: detalleEvento(elemento)).grid(row=i, column=j + 4)
+                              command=lambda elemento=elemento: detalleEvento(elemento[0])).grid(row=i, column=j + 4)
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
@@ -453,8 +453,8 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
-    def editarProducto(tipo, valor, stock=9999, id):
-        db.actualizar('producto', ('tipo', 'valor', 'stock'), (tipo, valor, stock))
+    def editarProducto(id, tipo, valor, stock=9999):
+        db.actualizar('producto', ('tipo', 'valor', 'stock'), (tipo, valor, stock), id)
         loggedInWindow()
 
     def editarProductoWindow(id, nombre="", precio="", stock=""):
@@ -480,9 +480,9 @@ def main():
 
         caja_stock.config(validate="key", validatecommand=(reg, '%P'))
 
-        boton1 = tk.Button(frame, text="Editar", command=lambda: editarProducto(caja_name.get(),
+        boton1 = tk.Button(frame, text="Editar", command=lambda: editarProducto(id, caja_name.get(),
                                                                                   int(caja_precio.get()),
-                                                                                  int(caja_stock.get()),id))
+                                                                                  int(caja_stock.get())))
         boton1.pack()
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
