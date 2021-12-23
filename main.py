@@ -219,7 +219,8 @@ def main():
         tk.Label(frame, text="Agregue un producto y su cantidad").pack()
         plist = []
         nlist = []
-        minimo = evento.asistencia * 3
+
+        minimo = db.seleccionarBD('asistencia', 'evento', 'id_evento='+str(evento)) * 3
         product = tk.StringVar()
         cant = tk.StringVar()
         itemList = db.seleccionarTabla(tabla)
