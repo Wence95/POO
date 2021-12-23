@@ -218,6 +218,9 @@ def main():
         tk.Label(frame, text="Total").grid(row=j+1, column=0)
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
 
+        boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
+        boton2.pack(side=tk.BOTTOM)
+
     def pefunction(q, p, evento, tabla):
         id_product = db.seleccionarBD('id_producto', 'producto', "tipo='"+p+"'")
         db.ingresar('evento_producto', ('id_producto', 'id_evento', 'cantidad'), (id_product[0], evento, int(q)))
