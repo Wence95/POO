@@ -211,7 +211,8 @@ def main():
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
 
     def pefunction(q, p, evento, tabla):
-
+        id_product = db.seleccionarBD('id_product', 'producto', 'tipo='+p)
+        db.ingresar('evento_producto', ('id_producto', 'id_evento', 'cantidad'), (id_product[0], evento, int(q)))
         loggedInWindow()
 
     def producto_evento(evento, tabla):
