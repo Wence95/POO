@@ -191,7 +191,7 @@ def main():
         precio = 0
         nombre = ""
         subtotal = 0
-        for producto in evento.productos:
+        for producto in evento:
             j += 1
             for p in itemList:
                 if producto["producto"] == p.tipo:
@@ -211,7 +211,7 @@ def main():
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
 
     def pefunction(q, p, evento, tabla):
-        id_product = db.seleccionarBD('id_product', 'producto', 'tipo='+p)
+        id_product = db.seleccionarBD('id_producto', 'producto', "tipo='"+p+"'")
         db.ingresar('evento_producto', ('id_producto', 'id_evento', 'cantidad'), (id_product[0], evento, int(q)))
         loggedInWindow()
 
