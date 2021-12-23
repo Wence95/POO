@@ -71,7 +71,7 @@ def main():
 
     def editarElemento(elemento, tabla):
         if tabla == 'producto':
-            valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id_producto='"+str(elemento)+"'")
+            valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id_producto="+str(elemento))
             editarProductoWindow(elemento, valores[0], valores[1], valores[2])
         elif tabla == 'cliente':
             valores = db.seleccionarBD(('nombre', 'rut', 'empresa', 'comuna', 'numero', 'email', 'metodo_pago'),
@@ -87,8 +87,8 @@ def main():
             editClientWindow(elemento, valores[0], valores[1], valores[2],
                                  valores[3], valores[4], valores[5], modo)
         elif tabla == 'evento':
-            valores = db.seleccionarBD(('rut', 'nombre', 'asistencia', 'fecha'))
-            editEventoWindow(valores[0], valores[1], str(valores[2]),
+            valores = db.seleccionarBD(('rut', 'nombre', 'asistencia', 'fecha'), tabla, "id_evento="+str(elemento))
+            editEventoWindow(elemento, valores[0], valores[1], str(valores[2]),
                                   valores[3])
         if tabla == 'usuario':
             if elemento.perfil == "Funcionario":
@@ -394,12 +394,13 @@ def main():
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
 
-    def registrarEvento(id, nombre, asistencia, fecha_hora, _rut):
+    def editEvento(id, nombre, asistencia, fecha_hora, _rut):
         db.actualizar('evento', ('nombre', 'asistencia', 'fecha', 'rut'), (nombre, asistencia, fecha_hora, _rut), id)
         # if bul:
         #    loggedInWindow()
         # else:
         #    registerClientWindow(_rut)
+        loggedInWindow()
 
     def registrarEvento(nombre, asistencia, fecha_hora, _rut):
         db.ingresar('evento', ('nombre', 'asistencia', 'fecha', 'rut'),(nombre, asistencia, fecha_hora, _rut))
@@ -407,6 +408,7 @@ def main():
         #    loggedInWindow()
         # else:
         #    registerClientWindow(_rut)
+        loggedInWindow()
 
     def editEventoWindow(id, rut="", event="", asis="", fecha="2022-01-01 10:00:00", mes="Enero", dia="1", hora="10:00"):
         clearWindow()
@@ -434,7 +436,7 @@ def main():
         caja_time.insert(tk.END, fecha)
         caja_time.pack()
 
-        boton1 = tk.Button(frame, text="Aceptar", command=lambda: registrarEvento(id, caja_event.get(),
+        boton1 = tk.Button(frame, text="Editar", command=lambda: editEvento(id, caja_event.get(),
                                                                                   int(caja_asis.get()),
                                                                                   caja_time.get(),
                                                                                   caja_rut.get()))

@@ -99,8 +99,6 @@ class BaseDatos:
         except Exception as e:
             raise
 
-
-
     def borrar(self, value, column, tabla):
         sql = "delete from {} where {} = {}".format(tabla, column, value)
         print(sql)
