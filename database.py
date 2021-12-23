@@ -26,6 +26,27 @@ class BaseDatos:
         except Exception as e:
             raise
 
+    def seleccionarBD2(self, columns, tabla, conditions):
+        i = 0
+        columnString = ''
+        if type(columns) is not str:
+            for col in columns:
+                if i >= 1:
+                    columnString += ','
+                columnString = columnString + col
+                i += 1
+        else:
+            columnString = columns
+        sql = 'select {} from {} where {}'.format(columnString, tabla, conditions)
+        print(sql)
+        try:
+            self.cursor.execute(sql)
+            request = self.cursor.fetchall()
+            return request
+
+        except Exception as e:
+            raise
+
     def seleccionarBD(self, columns, tabla, conditions):
         i = 0
         columnString = ''

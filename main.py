@@ -191,12 +191,15 @@ def main():
         precio = 0
         nombre = ""
         subtotal = 0
-        productos = db.seleccionarBD(('valor', 'tipo', 'cantidad'), "evento INNER JOIN evento_producto ON"
+        productos = db.seleccionarBD2(('valor', 'tipo', 'cantidad'), "evento INNER JOIN evento_producto ON"
                                                                     " evento.id_evento=evento_producto.id_evento"
-                                                                    "INNER JOIN producto ON producto.id_producto"
+                                                                    " INNER JOIN producto ON producto.id_producto"
                                                                     "= evento_producto.id_producto",
                                      "evento.id_evento = "+ str(evento))
+        print(productos)
         for producto in productos:
+            j+=1
+
             precio = producto[0]
             nombre = producto[1]
             subtotal = precio * producto[2]
@@ -205,6 +208,7 @@ def main():
             tk.Label(frame, text=str(producto[2])).grid(row=j, column=2)
             tk.Label(frame, text=str(subtotal)).grid(row=j, column=3)
             suma += subtotal
+
         tk.Label(frame, text="Total").grid(row=j+1, column=0)
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
 
