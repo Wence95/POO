@@ -69,11 +69,11 @@ def main():
             db.borrar(elemento, 'id', tabla)
         mostrarLista(tabla)
 
-    def editarElemento(elemento, lista):
-        lista.remove(elemento)
-        if type(elemento) is Producto:
-            agregarProductoWindow(elemento.tipo, elemento.valor, elemento.stock)
-        if type(elemento) is Cliente:
+    def editarElemento(elemento, tabla):
+        if tabla == 'producto':
+            valores = db.seleccionarBD(('tipo', 'valor', 'stock'), tabla, "id='"+str(elemento)+"'")
+            editarProductoWindow(valores[0], valores[1], valores[2])
+        if tabla == 'cliente':
             if elemento.metodo == "Tarjeta":
                 modo = 1
             elif elemento.metodo == "Efectivo":
@@ -84,10 +84,10 @@ def main():
                 modo = 4
             registerClientWindow(elemento.nombre, elemento.rut, elemento.empresa,
                                  elemento.comuna, elemento.numero, elemento.email, modo)
-        if type(elemento) is Evento:
+        if tabla == 'evento':
             registrarEventoWindow(elemento.rut, elemento.nombre, str(elemento.asistencia),
                                   elemento.fecha, elemento.hora)
-        if type(elemento) is Usuario:
+        if tabla == 'usuario':
             if elemento.perfil == "Funcionario":
                 p = 1
             else:
@@ -381,7 +381,7 @@ def main():
         caja_asis.config(validate="key", validatecommand=(reg, '%P'))
 
         # timeFrame = tk.Frame(frame)
-        tk.Label(frame, text="Ingrese fecha y hora del evento (YYYY-MM-DD HH:MI:SS").pack()
+        tk.Label(frame, text="Ingrese fecha y hora del evento (YYYY-MM-DD HH:MI:SS)").pack()
         caja_time = tk.Entry(frame)
         caja_time.insert(tk.END, event)
         caja_time.pack()
@@ -419,7 +419,6 @@ def main():
         boton2.pack(side=tk.BOTTOM)
 
     def agregarProducto(tipo, valor, stock=9999):
-        newProduct = Producto(tipo, valor, stock)
         db.ingresar('producto', ('tipo', 'valor', 'stock'), (tipo, valor, stock))
         loggedInWindow()
 
@@ -449,6 +448,41 @@ def main():
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: agregarProducto(caja_name.get(),
                                                                                   int(caja_precio.get()),
                                                                                   int(caja_stock.get())))
+        boton1.pack()
+
+        boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
+        boton2.pack(side=tk.BOTTOM)
+
+    def editarProducto(tipo, valor, stock=9999, id):
+        db.actualizar('producto', ('tipo', 'valor', 'stock'), (tipo, valor, stock))
+        loggedInWindow()
+
+    def editarProductoWindow(id, nombre="", precio="", stock=""):
+        clearWindow()
+
+        tk.Label(frame, text="Ingrese nombre del producto").pack()
+        caja_name = tk.Entry(frame)
+        caja_name.insert(tk.END, nombre)
+        caja_name.pack()
+
+        tk.Label(frame, text="Ingrese su precio por unidad").pack()
+        caja_precio = tk.Entry(frame)
+        caja_precio.insert(tk.END, precio)
+        caja_precio.pack()
+
+        reg = ventana.register(callback)
+        caja_precio.config(validate="key", validatecommand=(reg, '%P'))
+
+        tk.Label(frame, text="Ingrese el stock del producto").pack()
+        caja_stock = tk.Entry(frame)
+        caja_stock.insert(tk.END, stock)
+        caja_stock.pack()
+
+        caja_stock.config(validate="key", validatecommand=(reg, '%P'))
+
+        boton1 = tk.Button(frame, text="Editar", command=lambda: editarProducto(caja_name.get(),
+                                                                                  int(caja_precio.get()),
+                                                                                  int(caja_stock.get()),id))
         boton1.pack()
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)

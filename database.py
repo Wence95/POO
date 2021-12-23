@@ -73,8 +73,25 @@ class BaseDatos:
             print("El valor ya existe",e)
             raise
 
-    def actualizar(self,id,nombre):
-        sql = "update registro set nombre='{}' where id={}".format(nombre,id)
+    def actualizar(self,tabla, columns, values, id):
+        i = 0
+        valueString = ''
+        columnString = ''
+        for val in values:
+            if i >= 1:
+                valueString += ','
+            if type(val) is str:
+                valueString = valueString + "'" + val + "'"
+            else:
+                valueString = valueString + str(val)
+            i += 1
+        j = 0
+        for col in columns:
+            if j >= 1:
+                columnString += ','
+            columnString = columnString + col
+            j += 1
+        sql = "update {} set {} = {} where id={}".format(tabla, columnString, valueString,id)
 
         try:
             self.cursor.execute(sql)
