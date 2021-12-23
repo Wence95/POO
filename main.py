@@ -67,7 +67,10 @@ def main():
             db.borrar(elemento, 'id_producto', tabla)
         else:
             db.borrar(elemento, 'id', tabla)
-        mostrarLista(tabla)
+        if tabla != 'evento_producto':
+            mostrarLista(tabla)
+        else:
+            detalleEvento()
 
     def editarElemento(elemento, tabla):
         if tabla == 'producto':
