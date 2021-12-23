@@ -210,22 +210,19 @@ def main():
         tk.Label(frame, text="Total").grid(row=j+1, column=0)
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
 
-    def pefunction(q, p, evento, lista):
-        lista.remove(evento)
-        dicc = {"cantidad": int(q),
-                "producto": p}
-        evento.productos.append(dicc)
-        lista.append(evento)
+    def pefunction(q, p, evento, tabla):
+
         loggedInWindow()
 
-    def producto_evento(evento, lista):
+    def producto_evento(evento, tabla):
         clearWindow()
-        tk.Label(frame, text="Agruegue un producto y su cantidad").pack()
+        tk.Label(frame, text="Agregue un producto y su cantidad").pack()
         plist = []
         nlist = []
         minimo = evento.asistencia * 3
         product = tk.StringVar()
         cant = tk.StringVar()
+        itemList = db.seleccionarTabla(tabla)
         for producto in itemList:
             plist.append(producto.tipo)
         tk.OptionMenu(frame, product, *plist).pack()
@@ -234,7 +231,7 @@ def main():
         tk.OptionMenu(frame, cant, *nlist).pack()
 
         boton1 = tk.Button(frame, text="Aceptar", command=lambda: pefunction(cant.get(),
-                                                                             product.get(), evento, lista))
+                                                                             product.get(), evento, tabla))
         boton1.pack()
 
     def mostrarLista(tabla):
