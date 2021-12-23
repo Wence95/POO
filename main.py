@@ -4,7 +4,7 @@ import pymysql
 from classes import *
 from funcs import *
 from database import *
-
+from graphs import *
 
 def main():
     db = BaseDatos()
@@ -150,6 +150,20 @@ def main():
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
+
+    def graficarProducto(producto):
+        stock = db.seleccionarBD('stock', 'producto', "tipo='"+producto+"'")
+        request = db.seleccionarBD2(('nombre', 'cantidad'), "evento INNER JOIN evento_producto ON"
+                                                  " evento.id_evento=evento_producto.id_evento"
+                                                  " INNER JOIN producto ON producto.id_producto"
+                                                  "= evento_producto.id_producto",
+                          "tipo='"+producto+"'")
+        eventos = []
+        cantidades = []
+        for nomcan in request:
+            eventos.append(nomcan[0])
+            cantidades.append(nomcan[0])
+        pieGraph(stock, eventos, cantidades)
 
     def signUpWindow(o=1, user="", name=""):
         clearWindow()
@@ -302,6 +316,9 @@ def main():
                     tk.Button(frame, text="Editar",
                               command=lambda elemento=elemento: editarElemento(elemento[0], tabla)).grid(row=i,
                                                                                                       column=j + 2)
+            if tabla == 'producto':
+                tk.Button(frame, text="Detalle stock", command=lambda elemento=elemento:
+                          graficarProducto(elemento[0]))
 
             if not (getProfile(state.username) == "Gestor"):
                 if tabla == 'evento':
