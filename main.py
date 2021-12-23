@@ -206,17 +206,28 @@ def main():
         tk.Label(frame, text="Total por producto").grid(row=0, column=3)
         suma = 0
         j = 0
-        precio = 0
-        nombre = ""
-        subtotal = 0
         productos = db.seleccionarBD2(('valor', 'tipo', 'cantidad', 'id'), "evento INNER JOIN evento_producto ON"
                                                                     " evento.id_evento=evento_producto.id_evento"
                                                                     " INNER JOIN producto ON producto.id_producto"
                                                                     "= evento_producto.id_producto",
                                      "evento.id_evento = "+ str(evento))
         print(productos)
+
+        def graficarEvento(evento):
+            request = db.seleccionarBD2(('tipo', 'cantidad'), "evento INNER JOIN evento_producto ON"
+                                                              " evento.id_evento=evento_producto.id_evento"
+                                                              " INNER JOIN producto ON producto.id_producto"
+                                                              "= evento_producto.id_producto",
+                                        "evento.id_evento = " + str(evento))
+            productos = []
+            cantidades = []
+            for p in request:
+                productos.append(p[0])
+                cantidades.append(p[1])
+            pieGraph(sum(cantidades), productos, cantidades)
+
         for producto in productos:
-            j+=1
+            j += 1
 
             precio = producto[0]
             nombre = producto[1]
@@ -225,13 +236,15 @@ def main():
             tk.Label(frame, text=nombre).grid(row=j, column=1)
             tk.Label(frame, text=str(producto[2])).grid(row=j, column=2)
             tk.Label(frame, text=str(subtotal)).grid(row=j, column=3)
-            tk.Button(frame, text="Eliminar",
-                      command=lambda producto=producto:
-                      eliminarElemento('evento_producto', producto[3])).grid(row=j, column=4)
+            if not (getProfile(state.username) == "Gestor"):
+                tk.Button(frame, text="Eliminar",
+                          command=lambda producto=producto:
+                          eliminarElemento('evento_producto', producto[3])).grid(row=j, column=4)
             suma += subtotal
 
         tk.Label(frame, text="Total").grid(row=j+1, column=0)
         tk.Label(frame, text=str(suma)).grid(row=j+2, column=0)
+        tk.Button(frame, text="Graficar", command=lambda evento=evento: graficarEvento(evento))
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
@@ -322,15 +335,15 @@ def main():
                 tk.Button(frame, text="Detalle stock", command=lambda elemento=elemento:
                           graficarProducto(elemento[0])).grid(row=i, column=j+3)
 
-            if not (getProfile(state.username) == "Gestor"):
-                if tabla == 'evento':
+            if tabla == 'evento':
+                if not (getProfile(state.username) == "Gestor"):
                     # noinspection PyShadowingNames
                     tk.Button(frame, text="Agregar producto",
                               command=lambda elemento=elemento: producto_evento(elemento[0],
                                                                                 tabla)).grid(row=i, column=j + 3)
-                    # noinspection PyShadowingNames
-                    tk.Button(frame, text="Detalle",
-                              command=lambda elemento=elemento: detalleEvento(elemento[0])).grid(row=i, column=j + 4)
+                # noinspection PyShadowingNames
+                tk.Button(frame, text="Detalle",
+                          command=lambda elemento=elemento: detalleEvento(elemento[0])).grid(row=i, column=j + 4)
 
         boton2 = tk.Button(auxFrame, text="Volver", command=loggedInWindow)
         boton2.pack(side=tk.BOTTOM)
